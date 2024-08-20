@@ -18,12 +18,14 @@ const char* ssid = "SSID";
 const char* password = "Password";
 
 ESP8266WebServer server(80);
+String ipAddress = "";
 
 bool manualMode = false;
 bool motorState = false;
 
 void setup() {
   pinMode(relayPin, OUTPUT);
+  pinMode(moisturePin,INPUT);
   pinMode(manualSwitchPin, INPUT_PULLUP);
 
   Serial.begin(115200);
@@ -44,7 +46,11 @@ void setup() {
     delay(500);
     Serial.print(".");
   }
+
+  ipAddress = WiFi.localIP().toString(); // Get IP address
   Serial.println("Connected to WiFi");
+  Serial.print("IP Address: ");
+  Serial.println(ipAddress);
 
   // Serve the dashboard page
   server.on("/", HTTP_GET, []() {
@@ -300,14 +306,14 @@ void loop() {
   display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE);
   display.setCursor(0, 0);
+  display.print("IP : ");
+  display.println(ipAddress);
+  display.println("---------------------");
   display.print("Soil Moisture : ");
   display.println(soilMoisture);
-  display.println("Temperature : 28 c");
-  display.println("Humidity : 11%");
-  display.print("Relay State: ");
+  display.println("Temp: 28c || Hum: 12%");
+  display.print("    Motor is ");
   display.println(motorState ? "ON" : "OFF");
-  display.setTextSize(1);
-  display.setCursor(0, 40);
   display.println("---------------------");
   display.println("By : Srishti Kumari");
   display.println("   : Shreya M B");
